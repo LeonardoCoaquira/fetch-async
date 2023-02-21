@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ejemplo de solicitud HTTP con fetch</title>
+    <script>
+      async function obtenerPersonaje(numero) {
+        try {
+          const respuesta = await fetch(`https://rickandmortyapi.com/api/character/${numero}`);
+          if (!respuesta.ok) {
+            throw new Error(`HTTP error! status: ${respuesta.status}`);
+          }
+          const personaje = await respuesta.json();
+          const resultado = document.getElementById('resultado');
+          resultado.innerHTML = `
+            <h2>${personaje.name}</h2>
+            <img src="${personaje.image}" alt="${personaje.name}">
+          `;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      function enviarFormulario(evento) {
+        evento.preventDefault();
+        const numero = document.getElementById('numero').value;
+        obtenerPersonaje(numero);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Buscar personaje de Rick and Morty por número</h1>
+    <form onsubmit="enviarFormulario(event)">
+      <label for="numero">Número del personaje:</label>
+      <input type="number" id="numero" name="numero" required>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultado"></div>
+  </body>
+</html>
