@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ejemplo de solicitud HTTP con fetch</title>
+    <script>
+        const socket = new WebSocket('wss://back.apisunat.com/');
+
+socket.addEventListener('open', () => {
+  console.log('Conexión WebSocket establecida');
+});
+
+socket.addEventListener('message', event => {
+  console.log('Mensaje recibido desde el servidor:', event.data);
+});
+
+socket.addEventListener('close', event => {
+  console.log('Conexión WebSocket cerrada:', event.code, event.reason);
+});
+
+
+
+        async function getGif(query) {
+            try {
+            const respuesta = await fetch(`https://g.tenor.com/v1/search?q=${query}&key=LIVDSRZULELA&limit=1`);
+            if (!respuesta.ok) {
+                throw new Error(`HTTP error! status: ${respuesta.status}`);
+            }
+            const gif = await respuesta.json();
+            const dataGif = gif['results'][0];
+            var resultado = document.getElementById('resultado');
+            resultado.innerHTML = `
+                <h2>${dataGif.content_description}</h2>
+                <img src="${dataGif.media[0].gif.url}" alt="${dataGif.name}" style="max-width:200px">
+            `;
+            } catch (error) {
+            console.log(error);
+            }
+        }
+
+        function sendForm(evento) {
+            evento.preventDefault();
+            const numero = document.getElementById('query').value;
+            getGif(numero);
+        }
+
+    </script>
+    </head>
+    <body>
+    <div id="hora-servidor"></div>
+    <h1>Buscar GIF en Tenor</h1>
+    <form onsubmit="sendForm(event)">
+      <label for="numero">Nombre del GIF:</label>
+      <input type="text" id="query" name="text" required>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultado"></div>
+  </body>
+</html>

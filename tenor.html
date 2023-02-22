@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ejemplo de solicitud HTTP con fetch</title>
+    <script>
+        async function getGif(query) {
+            try {
+            const respuesta = await fetch(`https://g.tenor.com/v1/search?q=${query}&key=LIVDSRZULELA&limit=1`);
+            if (!respuesta.ok) {
+                throw new Error(`HTTP error! status: ${respuesta.status}`);
+            }
+            const gif = await respuesta.json();
+            const dataGif = gif['results'][0];
+            var resultado = document.getElementById('resultado');
+            resultado.innerHTML = `
+                <h2>${dataGif.content_description}</h2>
+                <img src="${dataGif.media[0].gif.url}" alt="${dataGif.name}" style="max-width:200px">
+            `;
+            } catch (error) {
+            console.log(error);
+            }
+        }
+
+        async function getGifTop(query) {
+            try {
+            const respuesta = await fetch(`https://g.tenor.com/v1/random?q=${query}&key=LIVDSRZULELA&limit=1`);
+            if (!respuesta.ok) {
+                throw new Error(`HTTP error! status: ${respuesta.status}`);
+            }
+            const gif = await respuesta.json();
+            const dataGif = gif['results'][0];
+            var resultado = document.getElementById('resultadoTop');
+            resultado.innerHTML = `
+                <h2>${dataGif.content_description}</h2>
+                <img src="${dataGif.media[0].gif.url}" alt="${dataGif.name}" style="max-width:200px">
+            `;
+            } catch (error) {
+            console.log(error);
+            }
+        }
+
+        function sendForm(evento) {
+            evento.preventDefault();
+            const numero = document.getElementById('query').value;
+            getGif(numero);
+        }
+
+        function formPopular(evento) {
+            evento.preventDefault();
+            const cat = document.getElementById('queryTop').value;
+            getGifTop(cat);
+        }
+    </script>
+    </head>
+    <body>
+    <h1>Buscar GIF en Tenor</h1>
+    <form onsubmit="sendForm(event)">
+      <label for="numero">Nombre del GIF:</label>
+      <input type="text" id="query" name="text" required>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultado"></div>
+    <br>
+    <h1>Buscar GIF popular por Categoría en Tenor</h1>
+    <form onsubmit="formPopular(event)">
+        <label for="numero">Nombre de la categoria:</label>
+        <input type="text" id="queryTop" name="text" required>
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultadoTop"></div>
+  </body>
+</html>
